@@ -10,11 +10,19 @@
     <description>商城服务-聚合工程</description>
     <packaging>pom</packaging>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.6</version>
+        <relativePath /> <!-- 空值，直接引用中央仓库的 spring-boot-starter-parent -->
+    </parent>
+
     <modules>
         <module>mall-ware</module>
         <module>mall-member</module>
         <module>mall-coupon</module>
         <module>mall-order</module>
         <module>mall-producet</module>
+        <module>renren-fast-master</module>
     </modules>
 </project>

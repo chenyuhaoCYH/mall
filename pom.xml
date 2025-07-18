@@ -25,4 +25,17 @@
         <module>mall-producet</module>
         <module>renren-fast-master</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.83</version> <!-- Use the latest version -->
+        </dependency>
+    </dependencies>
 </project>

@@ -18,24 +18,14 @@
     </parent>
 
     <modules>
+        <module>mall-common</module>
         <module>mall-ware</module>
         <module>mall-member</module>
         <module>mall-coupon</module>
         <module>mall-order</module>
-        <module>mall-producet</module>
+        <module>mall-product</module>
         <module>renren-fast-master</module>
+        <module>renren-generator-master</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>21.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.83</version> <!-- Use the latest version -->
-        </dependency>
-    </dependencies>
 </project>

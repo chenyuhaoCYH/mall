@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: mall-gateway
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.249.223:8848 # nacos 地址和端口
+        username: nacos # nacos 认证用户名
+        password: nacos # nacos 认证密码
+        ext-config[0]:
+          data-id: business
+          group: dev
+          refresh: true
+        ext-config[1]:
+          data-id: degrade
+          group: dev
+          refresh: true
+        namespace: 27096604-bc0e-4760-81ca-6d240c793066
+        group: dev
+#        namespace: bc7ac673-2947-442d-925f-c782e63b8e0b #命名空间
+#        group: dev  #环境配置

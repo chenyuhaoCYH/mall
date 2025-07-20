@@ -4,7 +4,10 @@ import java.util.Arrays;
 import java.util.Map;
 
 
+import com.cyh.mall.coupon.rpc.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,22 +28,31 @@ import com.cyh.mall.common.utils.R;
  * @email chenyuhao@gmail.com
  * @date 2025-07-19 15:48:13
  */
+//动态刷新配置
+@RefreshScope
 @RestController
 @RequestMapping("coupon/coupon")
 public class CouponController {
+
     @Autowired
     private CouponService couponService;
+
+    @Autowired
+    ProductService productService;
+
+    @Value("${user.name:chen}")
+    private String name;
 
     /**
      * 列表
      */
     @RequestMapping("/list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = couponService.queryPage(params);
+        //PageUtils page = couponService.queryPage(params);
 
-        return R.ok().put("page", page);
+       // return R.ok().put("page", page);
+        return productService.queryAllBrand();
     }
-
 
     /**
      * 信息
@@ -49,7 +61,7 @@ public class CouponController {
     public R info(@PathVariable("id") Long id){
 		CouponEntity coupon = couponService.getById(id);
 
-        return R.ok().put("coupon", coupon);
+        return R.ok().put("coupon", name);
     }
 
     /**

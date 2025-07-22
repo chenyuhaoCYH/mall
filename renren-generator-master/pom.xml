@@ -9,9 +9,10 @@
 	<description>renren-generator</description>
 
 	<parent>
-		<groupId>com.cyh.mall</groupId>
-		<artifactId>mall-core</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.0</version>
+		<relativePath/> <!-- 空值，直接引用中央仓库的 spring-boot-starter-parent -->
 	</parent>
 
 	<properties>

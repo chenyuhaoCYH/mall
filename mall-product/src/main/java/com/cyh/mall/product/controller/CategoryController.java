@@ -1,15 +1,13 @@
 package com.cyh.mall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
+import com.cyh.mall.product.common.response.CategoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyh.mall.product.entity.CategoryEntity;
 import com.cyh.mall.product.service.CategoryService;
@@ -85,6 +83,13 @@ public class CategoryController {
 		categoryService.removeByIds(Arrays.asList(catIds));
 
         return R.ok();
+    }
+
+    @GetMapping("/listWithTree")
+    //@ApiOperation("分类列表带等级")
+    public R listWithTree(@RequestParam Map<String, Object> params){
+        List<CategoryDTO> result=categoryService.listWithTree(params);
+        return R.ok().put("pageResult",result);
     }
 
 }

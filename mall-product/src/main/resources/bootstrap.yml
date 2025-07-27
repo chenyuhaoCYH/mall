@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: mall-product
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.249.223:8848 # nacos 地址和端口
+        username: nacos # nacos 认证用户名
+        password: nacos # nacos 认证密码
+        ext-config[0]:
+          data-id: business
+          group: dev
+          refresh: true
+        ext-config[1]:
+          data-id: degrade
+          group: dev
+          refresh: true
+        namespace: 6ec63b08-4172-4ab9-846b-26534f722829
+        group: dev

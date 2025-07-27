@@ -16,11 +16,13 @@ spring:
         - id: product_router
           uri: lb://mall-product
           predicates:
-            - Path=/app/product/**
+            - Path=/product/**
+          filters:
+            - RewritePath=/(?<segment>/?.*), /$\{segment}
         - id: app_route
           uri: lb://renren-fast
           predicates:
-            - Path=/app/**
+            - Path=/**
           filters:
-            - RewritePath=/app/(?<segment>/?.*), /renren-fast/$\{segment}
+            - RewritePath=/(?<segment>/?.*), /renren-fast/$\{segment}
 

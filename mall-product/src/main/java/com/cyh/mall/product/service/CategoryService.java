@@ -2,6 +2,7 @@ package com.cyh.mall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyh.mall.common.utils.PageUtils;
+import com.cyh.mall.common.utils.R;
 import com.cyh.mall.product.common.response.CategoryDTO;
 import com.cyh.mall.product.entity.CategoryEntity;
 
@@ -21,5 +22,10 @@ public interface CategoryService extends IService<CategoryEntity> {
 
     List<CategoryDTO> listWithTree(Map<String, Object> params);
 
+    R removeCategoryByIds(List<String> deleteCatIds);
+
+    R saveCategory(CategoryEntity category);
+
+    boolean updateBatch(List<CategoryEntity> categoryList);
 }
 

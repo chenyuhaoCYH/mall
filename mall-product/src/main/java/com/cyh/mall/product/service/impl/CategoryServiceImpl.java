@@ -1,8 +1,14 @@
 package com.cyh.mall.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyh.mall.common.constant.RequestConstant;
+import com.cyh.mall.common.utils.R;
+import com.cyh.mall.common.constant.ResponseConstant;
 import com.cyh.mall.product.common.response.CategoryDTO;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.ibatis.executor.BatchResult;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -50,21 +56,72 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         //获取类型关系
         categoryEntities.forEach(categoryEntity -> {
             CategoryDTO curCategoryDTO = categoryDTOMap.get(categoryEntity.getCatId());
-            if (categoryEntity.getParentCid()==0){
+            if (categoryEntity.getParentCid()==null||categoryEntity.getParentCid()==0){
                 //一级目录
                 resultList.add(curCategoryDTO);
             }else {
                 //非一级目录
                 CategoryDTO categoryDTO = categoryDTOMap.get(categoryEntity.getParentCid());
-                if (CollectionUtils.isEmpty(categoryDTO.getChildrenList())){
+                if (CollectionUtils.isEmpty(categoryDTO.getChildrens())){
                     ArrayList<CategoryDTO> childrenList = new ArrayList<>();
-                    categoryDTO.setChildrenList(childrenList);
+                    categoryDTO.setChildrens(childrenList);
                 }
-                categoryDTO.getChildrenList().add(curCategoryDTO);
+                categoryDTO.getChildrens().add(curCategoryDTO);
             }
         });
         sortTree(resultList);
         return resultList;
+    }
+
+    /**
+     * 删除种类-逻辑删除
+     * @param deleteCatIds deleteCatIds
+     */
+    @Override
+    public R removeCategoryByIds(List<String> deleteCatIds) {
+        try {
+            if (CollectionUtils.isEmpty(deleteCatIds)){
+                return R.error(ResponseConstant.Delete.NULL_LIST);
+            }
+            List<Long> catIds = deleteCatIds.stream().map(Long::parseLong).collect(Collectors.toList());
+            List<CategoryEntity> categoryEntities = baseMapper.selectList(new LambdaQueryWrapper<CategoryEntity>()
+                    .eq(CategoryEntity::getShowStatus,1)
+                    .in(CategoryEntity::getParentCid, catIds)
+                    .notIn(CategoryEntity::getCatId, catIds));
+            if (CollectionUtils.isNotEmpty(categoryEntities)){
+
+                 return R.error(ResponseConstant.Delete.NOT_DELETE);
+            }
+            //todo 业务逻辑判断是否还在使用
+            baseMapper.delete(new QueryWrapper<CategoryEntity>().in("cat_id",catIds));
+            return R.ok(ResponseConstant.Delete.SUCCESS);
+        } catch (Exception e) {
+            log.error("removeCategoryByIds error:",e);
+        }
+        return R.error(ResponseConstant.Delete.FAIL);
+    }
+
+    @Override
+    public R saveCategory(CategoryEntity category) {
+        if (category==null||category.getParentCid()==null|| StringUtils.isBlank(category.getName())){
+            return R.error(RequestConstant.PARAM_ERROR);
+        }
+        List<CategoryEntity> categoryEntities = baseMapper.selectList(new LambdaQueryWrapper<CategoryEntity>()
+                .eq(CategoryEntity::getCatId, category.getParentCid()));
+        if (CollectionUtils.isEmpty(categoryEntities)){
+            return R.error(ResponseConstant.Save.Category.PARENT_CATEGORY_NOT_EXIST);
+        }
+        int insert = baseMapper.insert(category);
+        return insert>0?R.ok():R.error(ResponseConstant.Save.FAIL);
+    }
+
+    @Override
+    public boolean updateBatch(List<CategoryEntity> categoryList) {
+        if (CollectionUtils.isEmpty(categoryList)){
+            return false;
+        }
+        List<BatchResult> batchResults = baseMapper.updateById(categoryList);
+        return true;
     }
 
     /**
@@ -78,8 +135,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             }
             resultList.sort(Comparator.comparingInt(CategoryDTO::getSort));
             resultList.forEach(categoryDTO -> {
-                if (CollectionUtils.isNotEmpty(categoryDTO.getChildrenList())){
-                    sortTree(categoryDTO.getChildrenList());
+                if (CollectionUtils.isNotEmpty(categoryDTO.getChildrens())){
+                    sortTree(categoryDTO.getChildrens());
                 }
             });
         } catch (Exception e) {

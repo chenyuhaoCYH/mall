@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 
+import com.cyh.mall.common.constant.ResponseConstant;
+import com.cyh.mall.product.common.request.CategoryRequestDTO;
 import com.cyh.mall.product.common.response.CategoryDTO;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,40 +60,47 @@ public class CategoryController {
      * 保存
      */
     @RequestMapping("/save")
-    
-    public R save(@RequestBody CategoryEntity category){
-		categoryService.save(category);
-
-        return R.ok();
+    public R save(@RequestBody CategoryRequestDTO categoryRequestDTO){
+        CategoryEntity category = new CategoryEntity();
+        BeanUtils.copyProperties(categoryRequestDTO,category);
+        return categoryService.saveCategory(category);
     }
 
     /**
      * 修改
      */
     @RequestMapping("/update")
-    
     public R update(@RequestBody CategoryEntity category){
-		categoryService.updateById(category);
+        boolean flag = categoryService.updateById(category);
+        return flag?R.ok(ResponseConstant.Update.SUCCESS):R.error(ResponseConstant.Update.FAIL);
+    }
 
-        return R.ok();
+    @RequestMapping("/updateBatch")
+    public R updateBatch(@RequestBody List<CategoryEntity> categoryList){
+        if (categoryService.updateBatch(categoryList)){
+          return  R.ok(ResponseConstant.Update.SUCCESS);
+        }
+        else {
+           return R.error(ResponseConstant.Update.FAIL_PARTITION);
+        }
     }
 
     /**
      * 删除
      */
     @RequestMapping("/delete")
-    
-    public R delete(@RequestBody Long[] catIds){
-		categoryService.removeByIds(Arrays.asList(catIds));
-
-        return R.ok();
+    public R delete(@RequestBody CategoryRequestDTO categoryRequestDTO){
+        if (categoryRequestDTO==null||CollectionUtils.isEmpty(categoryRequestDTO.getDeleteCatIds())){
+            return R.ok();
+        }
+		return categoryService.removeCategoryByIds(categoryRequestDTO.getDeleteCatIds());
     }
 
-    @GetMapping("/listWithTree")
+    @GetMapping("/listTree")
     //@ApiOperation("分类列表带等级")
-    public R listWithTree(@RequestParam Map<String, Object> params){
+    public R listTree(@RequestParam Map<String, Object> params){
         List<CategoryDTO> result=categoryService.listWithTree(params);
-        return R.ok().put("pageResult",result);
+        return R.ok().put("data",result);
     }
 
 }

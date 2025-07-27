@@ -1,6 +1,5 @@
 package com.cyh.mall.product.common.response;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.util.List;
@@ -48,5 +47,5 @@ public class CategoryDTO {
      *
      * 子类别
      */
-    private List<CategoryDTO> childrenList;
+    private List<CategoryDTO> childrens;
 }
